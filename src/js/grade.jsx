@@ -1,20 +1,25 @@
 import React, { Component } from "react";
 import { Card, CardHeader, CardBody, Table } from "reactstrap";
-import db from './storage';
+import db from "./storage";
 import echarts from "echarts";
 
+// noinspection JSUnusedLocalSymbols
 class OneLine extends Component {
   render() {
     const d = this.props.data;
-    const time = new Date(d.time)
+    const time = new Date(d.time);
     const dateS = time.toLocaleDateString();
     const timeS = time.toLocaleTimeString();
-    return (<tr>
-      <td>{dateS}{" "}{timeS}</td>
-      <td>{parseInt(d.speed * 100) / 100}</td>
-      <td>{parseInt(d.wordsSpeed * 100) / 100}</td>
-      <td>{parseInt(d.error * 100)}%</td>
-    </tr>)
+    return (
+      <tr>
+        <td>
+          {dateS} {timeS}
+        </td>
+        <td>{Math.floor(d.speed * 100) / 100}</td>
+        <td>{Math.floor(d.wordsSpeed * 100) / 100}</td>
+        <td>{Math.floor(d.error * 100)}%</td>
+      </tr>
+    );
   }
 }
 /*
@@ -48,7 +53,7 @@ class Grade extends Component {
     const str = db.getItem("history") || "[]";
     const data = JSON.parse(str) || [];
     this.state = {
-      data: data//.reverse(),
+      data: data, //.reverse(),
     };
   }
 
@@ -72,7 +77,7 @@ class AllInfo extends Component {
     super(props);
     this.state = JSON.parse(db.getItem("all_info")) || {
       number: 0,
-      time: 0
+      time: 0,
     };
     this.OneLine = this.OneLine.bind(this);
     this.timeInfo = this.timeInfo.bind(this);
@@ -80,53 +85,54 @@ class AllInfo extends Component {
 
   timeInfo({ time, number }) {
     const t = parseInt(time) / 100;
-    let tShow = ""
+    let tShow = "";
     if (t < 60) {
       tShow = t.toString() + "秒";
     } else if (t < 3600) {
-      const tMinute = parseInt(t / 60);
-      const tSecond = parseInt(t) % 60;
+      const tMinute = Math.floor(t / 60);
+      const tSecond = Math.floor(t) % 60;
       tShow = tMinute.toString() + "分" + tSecond.toString() + "秒";
     } else {
-      let tMinute = parseInt(t / 60);
-      const tHour = parseInt(tMinute / 60);
+      let tMinute = Math.floor(t / 60);
+      const tHour = Math.floor(tMinute / 60);
       tMinute = tMinute % 60;
       tShow = tHour.toString() + "时" + tMinute.toString() + "分";
     }
 
     const zi = number;
-    let ziShow = ""
+    let ziShow = "";
     if (zi < 1000) {
-      ziShow = zi
+      ziShow = zi;
     } else if (zi < 10000) {
-      const ziK = parseInt(zi / 10) / 100;
+      const ziK = Math.floor(zi / 10) / 100;
       ziShow = ziK.toString() + "K";
     } else {
-      const ziK = parseInt(zi / 100) / 100;
+      const ziK = Math.floor(zi / 100) / 100;
       ziShow = ziK.toString() + "万";
     }
-    const speed = parseInt(zi / Math.max(t, 1) * 60)
+    const speed = Math.floor((zi / Math.max(t, 1)) * 60);
     const speedShow = speed.toString() + "字/分";
 
     return {
       time: tShow,
       number: ziShow,
-      speed: speedShow
-    }
+      speed: speedShow,
+    };
   }
 
   OneLine(d, i) {
     const info = this.timeInfo(d);
-    return <tr key={i}>
-      <td>{d.date}</td>
-      <td>{info.time}</td>
-      <td>{info.number}</td>
-      <td>{info.speed}</td>
-    </tr>
+    return (
+      <tr key={i}>
+        <td>{d.date}</td>
+        <td>{info.time}</td>
+        <td>{info.number}</td>
+        <td>{info.speed}</td>
+      </tr>
+    );
   }
 
   render() {
-
     const allInfo = this.timeInfo(this.state);
 
     const allDays = this.state.days || {};
@@ -142,9 +148,7 @@ class AllInfo extends Component {
 
     return (
       <Card>
-        <CardHeader>
-          统计
-        </CardHeader>
+        <CardHeader>统计</CardHeader>
         <CardBody>
           <Table striped hover size="sm">
             <thead>
@@ -166,7 +170,8 @@ class AllInfo extends Component {
             </tbody>
           </Table>
         </CardBody>
-      </Card>)
+      </Card>
+    );
   }
 }
 
@@ -184,27 +189,55 @@ class Speed extends Component {
     const dateS = time.toLocaleDateString();
     const timeS = time.toLocaleTimeString();
 
-    if (params.length == 2) {
-      return dateS + " " + timeS + '<br />'
-        + params[0].seriesName + ' : ' + params[0].value + ' (次/秒)<br />'
-        + params[1].seriesName + ' : ' + params[1].value + ' (字/分)';
-    } else if (params.length == 1) {
-      if (params[0].seriesName == "击键") {
-        return dateS + " " + timeS + '<br />'
-          + params[0].seriesName + ' : ' + params[0].value + " (次/秒)";
+    if (params.length === 2) {
+      return (
+        dateS +
+        " " +
+        timeS +
+        "<br />" +
+        params[0].seriesName +
+        " : " +
+        params[0].value +
+        " (次/秒)<br />" +
+        params[1].seriesName +
+        " : " +
+        params[1].value +
+        " (字/分)"
+      );
+    } else if (params.length === 1) {
+      if (params[0].seriesName === "击键") {
+        return (
+          dateS +
+          " " +
+          timeS +
+          "<br />" +
+          params[0].seriesName +
+          " : " +
+          params[0].value +
+          " (次/秒)"
+        );
       } else {
-        return dateS + " " + timeS + '<br />'
-          + params[0].seriesName + ' : ' + params[0].value + ' (字/分)';
+        return (
+          dateS +
+          " " +
+          timeS +
+          "<br />" +
+          params[0].seriesName +
+          " : " +
+          params[0].value +
+          " (字/分)"
+        );
       }
     } else {
       return dateS + " " + timeS;
     }
-
   }
 
   ave(...data) {
     var d = 0;
-    data.map(v => { d = d + v });
+    data.map((v) => {
+      d = d + v;
+    });
     d = d / data.length;
     return d || 0;
   }
@@ -222,30 +255,32 @@ class Speed extends Component {
     });
 
     const maxSpeed = Math.ceil(Math.max(...speedList) / 2) * 2 || 2;
-    const maxSpeedWords = Math.ceil(Math.max(...speedWordsList) / 20) * 20 || 20;
+    const maxSpeedWords =
+      Math.ceil(Math.max(...speedWordsList) / 20) * 20 || 20;
 
     const minSpeed = Math.floor(Math.min(...speedList) / 2) * 2 || 1;
-    const minSpeedWords = Math.floor(Math.min(...speedWordsList) / 20) * 20 || 10;
+    const minSpeedWords =
+      Math.floor(Math.min(...speedWordsList) / 20) * 20 || 10;
 
     const aveSpeed = this.ave(...speedList);
     const aveSpeedWords = this.ave(...speedWordsList);
 
-    const dData = Math.ceil((aveSpeed - aveSpeedWords / 30));
+    const dData = Math.ceil(aveSpeed - aveSpeedWords / 30);
 
-    const interval = ((maxSpeedWords - minSpeedWords) / (maxSpeed - minSpeed));
+    const interval = (maxSpeedWords - minSpeedWords) / (maxSpeed - minSpeed);
     this.chart.setOption({
       title: {
-        text: ''
+        text: "",
       },
       xAxis: {
         data: timeList,
         type: "category",
         boundaryGap: false,
-        axisLine: { onZero: true }
+        axisLine: { onZero: true },
       },
       tooltip: {
-        trigger: 'axis',
-        formatter: this.tooltip
+        trigger: "axis",
+        formatter: this.tooltip,
       },
       toolbox: {
         show: true,
@@ -253,50 +288,55 @@ class Speed extends Component {
           mark: { show: true },
           dataView: { show: true, readOnly: false },
           restore: { show: true },
-          saveAsImage: { show: true }
-        }
+          saveAsImage: { show: true },
+        },
       },
       legend: {
-        data: ['击键', '打字'],
-        x: 'left'
+        data: ["击键", "打字"],
+        x: "left",
       },
       yAxis: [
         {
-          name: '击键（次/秒）',
-          type: 'value',
-          max: maxSpeed,// 10 + dData,
-          min: minSpeed,//dData,
+          name: "击键（次/秒）",
+          type: "value",
+          max: maxSpeed, // 10 + dData,
+          min: minSpeed, //dData,
           axisLabel: {
-            formatter: function (value) { return value; }
-          }
+            formatter: function (value) {
+              return value;
+            },
+          },
         },
         {
-          name: '打字速度（字/分）',
-          type: 'value',
+          name: "打字速度（字/分）",
+          type: "value",
           max: maxSpeedWords,
           interval: interval,
           min: minSpeedWords,
           axisLabel: {
-            formatter: function (value) { return Math.floor(value); }
+            formatter: function (value) {
+              return Math.floor(value);
+            },
           },
-          show: true
-        }
+          show: true,
+        },
       ],
-      series: [{
-        name: '击键',
-        type: 'line',
-        smooth: 0.5,
-        data: speedList
-
-      }, {
-        yAxisIndex: 1,
-        name: '打字',
-        type: 'line',
-        smooth: 0.5,
-        data: speedWordsList
-
-      }]
-    })
+      series: [
+        {
+          name: "击键",
+          type: "line",
+          smooth: 0.5,
+          data: speedList,
+        },
+        {
+          yAxisIndex: 1,
+          name: "打字",
+          type: "line",
+          smooth: 0.5,
+          data: speedWordsList,
+        },
+      ],
+    });
   }
 
   setTimeOut() {
@@ -311,10 +351,9 @@ class Speed extends Component {
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.setTimeOut);
-
   }
   render() {
-    return (<div ref="chart" style={{ width: "100%", height: 300 }}></div>);
+    return <div ref="chart" style={{ width: "100%", height: 300 }} />;
   }
 }
 
@@ -359,7 +398,7 @@ class App extends Component {
   }
 }
     */
-    /*  <Table striped hover size="sm">
+/*  <Table striped hover size="sm">
             <thead>
               <tr>
                 <th>时间</th>

@@ -1,5 +1,19 @@
-import React, { Component } from "react";
-import { Row, Col, Card, CardHeader, CardBody, Form, FormText, FormGroup, Label, Input, Button, CardBlock, InputGroup, InputGroupAddon, InputGroupText } from "reactstrap";
+import React, {Component} from "react";
+import {
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Col,
+	Form,
+	FormGroup,
+	FormText,
+	Input,
+	InputGroup,
+	InputGroupAddon,
+	Label,
+	Row
+} from "reactstrap";
 import db from './storage';
 
 class SelectButton extends Component {
